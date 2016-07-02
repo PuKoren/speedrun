@@ -1,6 +1,11 @@
-#include "consts.h"
+#include <iostream>
+#include "config.h"
+#include "Application.h"
 
-int main(int argc, char** argv) {
+using namespace std;
 
-    return 1;
+int main(int argc, char** argv){
+    Application a;
+    a.run();
+    return 0;
 }
