@@ -1,6 +1,7 @@
 #include <irrlicht/irrlicht.h>
 #include "EventReceiver.h"
 #include "Menu.h"
+#include "Game.h"
 #include "IGameObject.h"
 
 class Application{

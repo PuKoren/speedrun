@@ -42,7 +42,7 @@ void Application::loadLevel(){
             scene = NULL;
             break;
         case GameStates::INGAME:
-
+            scene = new GameScreen(device);
             break;
         default:
             scene = new Menu(device);

@@ -17,19 +17,10 @@ namespace LoginSteps{
 
 class Menu: public IGameObject{
 private:
-    LoginSteps::Steps login_step;
-
-    gui::IGUIEditBox*  loginBox;
-    gui::IGUIEditBox*  passwordBox;
-    gui::IGUIStaticText* errorText;
-
     scene::ISceneManager* smgr;
     irr::IrrlichtDevice* device;
     video::IVideoDriver* driver;
     scene::ICameraSceneNode* camera;
-
-    void sendCredentials();
-
 public:
     Menu(IrrlichtDevice* device);
     virtual ~Menu();
