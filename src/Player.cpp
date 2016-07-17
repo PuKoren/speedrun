@@ -16,10 +16,11 @@ Player::Player(scene::ISceneManager *p_smgr, Bullet *p_bullet, irr::IEventReceiv
 
     camera = m_smgr->addCameraSceneNodeFPS(0, 100.f, 0.f);
 
-    m_rbody = m_bullet->AddCapsule(m_node, 1.f);
+    m_rbody = m_bullet->AddCapsule(m_node, 10.f);
     m_rbody->setLinearFactor(btVector3(1,1,1));
     m_rbody->setSleepingThresholds(0.f, 0.f);
     m_rbody->setAngularFactor(btVector3(0,0,0));
+    m_rbody->setFriction(1.f);
 
     //m_rbody->setUserPointer(this);
     m_layer = PLAYER;
