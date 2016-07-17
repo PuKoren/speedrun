@@ -3,7 +3,7 @@
 GameScreen::GameScreen(IrrlichtDevice *device){
     this->device = device;
     this->device = device;
-    this->device->getCursorControl()->setVisible(true);
+    this->device->getCursorControl()->setVisible(false);
 
     //irr::gui::IGUIEnvironment* guienv = device->getGUIEnvironment();
     irr::scene::ISceneManager* smgr = device->getSceneManager();
