@@ -3,7 +3,18 @@
 using namespace irr;
 
 Application::Application(){
-    device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(800, 600), 32, false, true, true, &eventReceiver);
+
+    SIrrlichtCreationParameters params;
+    params.AntiAlias = 4;
+    params.Bits = 32;
+    params.Vsync = true;
+    params.DriverType = video::EDT_OPENGL;
+    params.Stencilbuffer = true;
+    params.WindowSize = core::dimension2d<u32>(800, 600);
+    params.EventReceiver = &eventReceiver;
+
+    device = createDeviceEx(params);
+
     oldState = state = GameStates::MENU;
     scene = NULL;
 
