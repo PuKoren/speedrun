@@ -41,6 +41,7 @@ void Bullet::UpdatePhysics(u32 TDeltaTime) {
     }
 
     /*
+     * Use this to trigger functions callbacks when object get a collision
     int numManifolds = World->getDispatcher()->getNumManifolds();
     for (int i=0;i<numManifolds;i++)
     {
@@ -134,14 +135,16 @@ btCollisionShape* Bullet::GetSphereShape(float radius){
 }
 
 btCollisionShape* Bullet::GetBoxShape(scene::ISceneNode* node){
-    core::vector3df scale = node->getScale();
-    btVector3 HalfExtents(scale.X * 0.5f, scale.Y * 0.5f, scale.Z * 0.5f);
+    core::vector3df scale = node->getTransformedBoundingBox().getExtent();
+
+    btVector3 HalfExtents(scale.X / 2, scale.Y / 2, scale.Z / 2);
     return new btBoxShape(HalfExtents);
 }
 
 btCollisionShape* Bullet::GetCapsuleShape(scene::ISceneNode* node){
-    core::vector3df scale = node->getScale();
-    return new btCapsuleShape(scale.X *0.5f, scale.Y * 0.5f);
+    core::vector3df scale = node->getTransformedBoundingBox().getExtent();
+    std::cout << scale.X << '|' << scale.Y << std::endl;
+    return new btCapsuleShape(scale.X / 2, scale.Y / 2);
 }
 
 void Bullet::ClearObjects() {
