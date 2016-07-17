@@ -100,6 +100,10 @@ btRigidBody* Bullet::AddSphere(scene::ISceneNode* node, float radius, double mas
 }
 
 btRigidBody* Bullet::Add(scene::ISceneNode* node, double mass, btCollisionShape *Shape, bool isKinematic){
+    if (isKinematic) {
+        mass = 0.f;
+    }
+
     btTransform Transform;
     Transform.setIdentity();
     core::vector3df pos = node->getPosition();
