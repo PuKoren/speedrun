@@ -38,6 +38,15 @@ void Player::collisionCallback(IBulletObject* p_obj){
 
 }
 
+core::vector3df Player::getCameraDirection() {
+    core::vector3df target = camera->getTarget();
+    core::vector3df position = camera->getPosition();
+    target.Y = 0.f;
+    position.Y = 0.f;
+
+    return (target - position).normalize();
+}
+
 void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
     btVector3 velocity = m_rbody->getLinearVelocity();
     btScalar speed = velocity.length();
@@ -46,19 +55,8 @@ void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
         m_rbody->setLinearVelocity(velocity);
     }
 
-    camera->setPosition(m_node->getPosition());
-
-    core::vector3df target = camera->getTarget();
-    core::vector3df position = camera->getPosition();
-    target.Y = 0.f;
-    position.Y = 0.f;
-
-    core::vector3df cameraVectForward = (target - position).normalize();
-    core::vector3df cameraVectSteer = cameraVectForward;
-
-    core::matrix4 m;
-    m.setRotationDegrees(core::vector3df(0.f, 90.f, 0.f));
-    m.rotateVect(cameraVectSteer);
+    core::vector3df cameraPosition = m_node->getPosition();
+    camera->setPosition(cameraPosition);
 
     if(m_event->IsKeyDown(KEY_SPACE)){
         m_rbody->applyCentralImpulse(btVector3(0,JUMP_SPEED,0));
@@ -68,21 +66,41 @@ void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
         m_rbody->applyCentralImpulse(btVector3(0,-JUMPDOWN_SPEED,0));
     }
 
-    if(m_event->IsKeyDown(KEY_KEY_W)){
-        m_rbody->applyCentralImpulse(ACCELERATION_SPEED * btVector3(cameraVectForward.X, cameraVectForward.Y, cameraVectForward.Z));
+    //forward/backward
+    if(m_event->IsKeyDown(KEY_KEY_W) || m_event->IsKeyDown(KEY_KEY_S)){
+        core::vector3df cameraVectForward = getCameraDirection();
+
+        float acceleration = 0.f;
+
+        if (m_event->IsKeyDown(KEY_KEY_W)) {
+            acceleration += ACCELERATION_SPEED;
+        }
+        if(m_event->IsKeyDown(KEY_KEY_S)){
+            acceleration -= ACCELERATION_SPEED;
+        }
+
+        m_rbody->applyCentralImpulse(acceleration * btVector3(cameraVectForward.X, cameraVectForward.Y, cameraVectForward.Z));
     }
 
-    if(m_event->IsKeyDown(KEY_KEY_S)){
-        m_rbody->applyCentralImpulse(-ACCELERATION_SPEED * btVector3(cameraVectForward.X, cameraVectForward.Y, cameraVectForward.Z));
-    }
+    //steer
+    if(m_event->IsKeyDown(KEY_KEY_A) || m_event->IsKeyDown(KEY_KEY_D)){
+        core::vector3df cameraVectForward = getCameraDirection();
 
-    //steer left
-    if(m_event->IsKeyDown(KEY_KEY_A)){
-        m_rbody->applyCentralImpulse(-ACCELERATION_SPEED * btVector3(cameraVectSteer.X, cameraVectSteer.Y, cameraVectSteer.Z));
-    }
+        float acceleration = 0.f;
+        core::vector3df cameraVectSteer = cameraVectForward;
 
-    //steer right
-    if(m_event->IsKeyDown(KEY_KEY_D)){
-        m_rbody->applyCentralImpulse(ACCELERATION_SPEED * btVector3(cameraVectSteer.X, cameraVectSteer.Y, cameraVectSteer.Z));
+        core::matrix4 m;
+        m.setRotationDegrees(core::vector3df(0.f, 90.f, 0.f));
+        m.rotateVect(cameraVectSteer);
+
+        if (m_event->IsKeyDown(KEY_KEY_A)) {
+            acceleration -= ACCELERATION_SPEED;
+        }
+
+        if(m_event->IsKeyDown(KEY_KEY_D)) {
+            acceleration += ACCELERATION_SPEED;
+        }
+
+        m_rbody->applyCentralImpulse(acceleration * btVector3(cameraVectSteer.X, cameraVectSteer.Y, cameraVectSteer.Z));
     }
 }

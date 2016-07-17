@@ -13,6 +13,7 @@ public:
     virtual void drawAll();
     virtual void update(irr::u32 DeltaTime, GameStates::GAME_STATE& gs);
 private:
+    core::vector3df getCameraDirection();
     scene::ICameraSceneNode* camera;
     irr::scene::ISceneManager* m_smgr;
     irr::scene::ISceneNode* m_node;
