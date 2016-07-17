@@ -143,7 +143,6 @@ btCollisionShape* Bullet::GetBoxShape(scene::ISceneNode* node){
 
 btCollisionShape* Bullet::GetCapsuleShape(scene::ISceneNode* node){
     core::vector3df scale = node->getTransformedBoundingBox().getExtent();
-    std::cout << scale.X << '|' << scale.Y << std::endl;
     return new btCapsuleShape(scale.X / 2, scale.Y / 2);
 }
 
