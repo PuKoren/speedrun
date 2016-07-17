@@ -17,16 +17,32 @@ GameScreen::GameScreen(IrrlichtDevice *device){
     */
 
     this->m_bullet = new Bullet();
+
+    //player
     m_player = new Player(smgr, m_bullet, device->getEventReceiver());
+
+    //multiple cubes to test physics
     for(int i = 0; i < 100; i++){
-        irr::scene::ISceneNode* tmp = smgr->addCubeSceneNode(1.0f, 0, 0, core::vector3df(rand()%40, rand()%40 + 20, 40.f));
-        tmp->getMaterial(0).EmissiveColor = irr::video::SColor(255, 128, 50, 30);
-        m_bullet->AddBox(tmp, 1.f)->setLinearFactor(btVector3(1, 1, 1));
+        irr::scene::ISceneNode* tmp = smgr->addCubeSceneNode(1.0f, 0, 0, core::vector3df(0.f, rand()%40 + 20, 0.f));
+        tmp->getMaterial(0).EmissiveColor = irr::video::SColor(255, 0, 0, 255);
+        m_bullet->AddBox(tmp, 10.f);
     }
 
+    //this is the central floor
     irr::scene::ISceneNode* tmp = smgr->addCubeSceneNode(100.0f, 0, 0, core::vector3df(0.f, -100.f, 0.f));
-    tmp->getMaterial(0).EmissiveColor = irr::video::SColor(255, 128, 50, 30);
-    m_bullet->AddBox(tmp, 0.f, true);
+    tmp->setVisible(true);
+    tmp->getMaterial(0).EmissiveColor = irr::video::SColor(0, 0, 255, 0);
+    btRigidBody* rbody = m_bullet->AddBox(tmp, 0.f, true);
+    rbody->setFriction(1.f);
+
+    //add light
+    irr::scene::ILightSceneNode*  pLight = smgr->addLightSceneNode();
+    irr::video::SLight & l = pLight->getLightData();
+    l.DiffuseColor = irr::video::SColor(255, 255, 0, 0);
+    l.CastShadows = true;
+    l.Attenuation = core::vector3df(10.f, 1.f, 1.f);
+    l.Type = irr::video::ELT_DIRECTIONAL;
+    pLight->setPosition(core::vector3df(-10.f, 0.f, -100.f));
 
 //    WorldGenerator gen(smgr, device->getVideoDriver(), m_bullet);
 //    gen.LoadLevel(0, 0);
