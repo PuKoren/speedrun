@@ -23,13 +23,20 @@ GameScreen::GameScreen(IrrlichtDevice *device){
 
     //multiple cubes to test physics
     for(int i = 0; i < 100; i++){
-        irr::scene::ISceneNode* tmp = smgr->addCubeSceneNode(1.0f, 0, 0, core::vector3df(0.f, rand()%40 + 20, 0.f));
+        irr::scene::ISceneNode* tmp = smgr->addCubeSceneNode(1.0f, 0, 0, core::vector3df(0.f, rand()%40 + 20, 0.f), core::vector3df(0.f, 0.f, 0.f), core::vector3df(rand()%5+1, rand()%5+1, rand()%5+1));
         tmp->getMaterial(0).EmissiveColor = irr::video::SColor(255, 0, 0, 255);
         m_bullet->AddBox(tmp, 10.f);
     }
 
+    //multiple balls to test physics
+    for(int i = 0; i < 500; i++){
+        irr::scene::ISceneNode* tmp = smgr->addSphereSceneNode(1, 8, 0, -1, core::vector3df(0.f, rand()%500, rand()%10));
+        tmp->getMaterial(0).EmissiveColor = irr::video::SColor(255, 0, 0, 255);
+        m_bullet->AddSphere(tmp, tmp->getTransformedBoundingBox().getExtent().X/2, 10.f);
+    }
+
     //this is the central floor
-    irr::scene::ISceneNode* tmp = smgr->addCubeSceneNode(100.0f, 0, 0, core::vector3df(0.f, -100.f, 0.f));
+    irr::scene::ISceneNode* tmp = smgr->addCubeSceneNode(1.0f, 0, 0, core::vector3df(0.f, -100.f, 0.f), core::vector3df(0.f, 0.f, 0.f), core::vector3df(1000.f, 10.f, 1000.f));
     tmp->setVisible(true);
     tmp->getMaterial(0).EmissiveColor = irr::video::SColor(0, 0, 255, 0);
     btRigidBody* rbody = m_bullet->AddBox(tmp, 0.f, true);
