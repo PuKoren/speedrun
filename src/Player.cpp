@@ -1,10 +1,9 @@
 #include "Player.h"
 
-
-float mMaxSpeed = 10.f;
-const float JUMP_SPEED = 1.f;
-const float ACCELERATION_SPEED = 0.2f;
-const float JUMPDOWN_SPEED = 0.1;
+float mMaxSpeed = 100.f;
+const float JUMP_SPEED = 0.25f;
+const float ACCELERATION_SPEED = 0.12f;
+const float JUMPDOWN_SPEED = 0.10f;
 scene::ICameraSceneNode* camera;
 
 Player::Player(scene::ISceneManager *p_smgr, Bullet *p_bullet, irr::IEventReceiver* p_event){
@@ -20,7 +19,7 @@ Player::Player(scene::ISceneManager *p_smgr, Bullet *p_bullet, irr::IEventReceiv
     m_rbody->setLinearFactor(btVector3(1,1,1));
     m_rbody->setSleepingThresholds(0.f, 0.f);
     m_rbody->setAngularFactor(btVector3(0,0,0));
-    m_rbody->setFriction(1.f);
+    m_rbody->setFriction(0.8f);
 
     //m_rbody->setUserPointer(this);
     m_layer = PLAYER;
@@ -60,11 +59,12 @@ void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
     camera->setPosition(cameraPosition);
 
     if(m_event->IsKeyDown(KEY_SPACE)){
-        m_rbody->applyCentralImpulse(btVector3(0,JUMP_SPEED,0));
+        this->canJump = false;
+        m_rbody->applyCentralImpulse(btVector3(0,JUMP_SPEED * DeltaTime,0));
     }
 
     if(m_event->IsKeyDown(KEY_LCONTROL)){
-        m_rbody->applyCentralImpulse(btVector3(0,-JUMPDOWN_SPEED,0));
+        m_rbody->applyCentralImpulse(btVector3(0,-JUMPDOWN_SPEED * DeltaTime,0));
     }
 
     //forward/backward
@@ -74,10 +74,10 @@ void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
         float acceleration = 0.f;
 
         if (m_event->IsKeyDown(KEY_KEY_W)) {
-            acceleration += ACCELERATION_SPEED;
+            acceleration += ACCELERATION_SPEED * DeltaTime;
         }
         if(m_event->IsKeyDown(KEY_KEY_S)){
-            acceleration -= ACCELERATION_SPEED;
+            acceleration -= ACCELERATION_SPEED * DeltaTime;
         }
 
         m_rbody->applyCentralImpulse(acceleration * btVector3(cameraVectForward.X, cameraVectForward.Y, cameraVectForward.Z));
@@ -95,11 +95,11 @@ void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
         m.rotateVect(cameraVectSteer);
 
         if (m_event->IsKeyDown(KEY_KEY_A)) {
-            acceleration -= ACCELERATION_SPEED;
+            acceleration -= ACCELERATION_SPEED * DeltaTime;
         }
 
         if(m_event->IsKeyDown(KEY_KEY_D)) {
-            acceleration += ACCELERATION_SPEED;
+            acceleration += ACCELERATION_SPEED * DeltaTime;
         }
 
         m_rbody->applyCentralImpulse(acceleration * btVector3(cameraVectSteer.X, cameraVectSteer.Y, cameraVectSteer.Z));
