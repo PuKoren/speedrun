@@ -69,6 +69,10 @@ bool GameScreen::OnEvent(const SEvent &event){
 void GameScreen::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
     this->m_player->update(DeltaTime, gs);
     this->m_bullet->UpdatePhysics(DeltaTime);
+
+    if(((EventReceiver*)device->getEventReceiver())->IsKeyDown(KEY_ESCAPE)) {
+        gs = GameStates::MENU;
+    }
 }
 
 void GameScreen::drawAll(){

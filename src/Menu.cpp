@@ -18,6 +18,8 @@ Menu::Menu(IrrlichtDevice* device){
     instruction->setTextAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER);
     instruction->setOverrideColor(video::SColor(255, 255, 255, 255));
 
+    this->isEscapeDown = ((EventReceiver*)device->getEventReceiver())->IsKeyDown(KEY_ESCAPE);
+
     if(!smgr || !driver) return;
 }
 
@@ -31,7 +33,12 @@ void Menu::update(u32 DeltaTime, GameStates::GAME_STATE& gs){
         //start level
         gs = GameStates::INGAME;
     } else if(((EventReceiver*)device->getEventReceiver())->IsKeyDown(KEY_ESCAPE)){
-        gs = GameStates::EXIT;
+        if (!this->isEscapeDown) {
+            gs = GameStates::EXIT;
+            this->isEscapeDown = true;
+        }
+    } else {
+        this->isEscapeDown = false;
     }
 }
 

@@ -21,6 +21,7 @@ private:
     irr::IrrlichtDevice* device;
     video::IVideoDriver* driver;
     scene::ICameraSceneNode* camera;
+    bool isEscapeDown;
 public:
     Menu(IrrlichtDevice* device);
     virtual ~Menu();
