@@ -109,4 +109,9 @@ void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
 
         m_rbody->applyCentralImpulse(acceleration * btVector3(cameraVectSteer.X, cameraVectSteer.Y, cameraVectSteer.Z));
     }
+
+    // do it at the end of the update so body is moved before camera
+    // otherwise with very high speed the capsule will be in another location
+    core::vector3df cameraPosition = m_node->getPosition();
+    camera->setPosition(cameraPosition);
 }
