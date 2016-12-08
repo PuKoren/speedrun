@@ -27,3 +27,8 @@ private:
     btCollisionDispatcher *Dispatcher;
     btSequentialImpulseConstraintSolver *Solver;
 };
+
+struct UserPointer {
+    scene::ISceneNode* node;
+    IBulletObject* bulletObject;
+};

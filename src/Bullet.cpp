@@ -26,7 +26,7 @@ void Bullet::UpdatePhysics(u32 TDeltaTime) {
 
         if(!(*it)->isKinematicObject()){
             //UpdateRender(*Iterator);
-            scene::ISceneNode *Node = static_cast<scene::ISceneNode *>((*it)->getUserPointer());
+            scene::ISceneNode *Node = static_cast<UserPointer *>((*it)->getUserPointer())->node;
             TObject = *it;
 
             // Set position
@@ -40,8 +40,7 @@ void Bullet::UpdatePhysics(u32 TDeltaTime) {
         }
     }
 
-    /*
-     * Use this to trigger functions callbacks when object get a collision
+
     int numManifolds = World->getDispatcher()->getNumManifolds();
     for (int i=0;i<numManifolds;i++)
     {
@@ -55,20 +54,21 @@ void Bullet::UpdatePhysics(u32 TDeltaTime) {
             btManifoldPoint& pt = contactManifold->getContactPoint(j);
             if (pt.getDistance()<0.f)
             {
-                IBulletObject* objA = ((IBulletObject*)obA->getUserPointer());
-                IBulletObject* objB = ((IBulletObject*)obB->getUserPointer());
+                IBulletObject* objA = ((UserPointer*)obA->getUserPointer())->bulletObject;
+                IBulletObject* objB = ((UserPointer*)obB->getUserPointer())->bulletObject;
                 const btVector3& ptA = pt.getPositionWorldOnA();
                 const btVector3& ptB = pt.getPositionWorldOnB();
                 const btVector3& normalOnB = pt.m_normalWorldOnB;
-                if(objA){
+
+                if (objA) {
                     objA->collisionCallback(objB);
                 }
-                if(objB){
+                if (objB) {
                     objB->collisionCallback(objA);
                 }
             }
         }
-    }*/
+    }
 }
 
 // Converts a quaternion to an euler angle
@@ -123,7 +123,9 @@ btRigidBody* Bullet::Add(scene::ISceneNode* node, double mass, btCollisionShape 
       RigidBody->setActivationState(DISABLE_DEACTIVATION);
     }
 
-    RigidBody->setUserPointer((void *)(node));
+    UserPointer* userPointer = new UserPointer();
+    userPointer->node = node;
+    RigidBody->setUserPointer((void *)(userPointer));
 
     World->addRigidBody(RigidBody);
     Objects.push_back(RigidBody);
@@ -151,7 +153,7 @@ void Bullet::ClearObjects() {
         btRigidBody *Object = *Iterator;
 
         // Delete irrlicht node
-        scene::ISceneNode *Node = static_cast<scene::ISceneNode *>(Object->getUserPointer());
+        scene::ISceneNode *Node = static_cast<UserPointer *>(Object->getUserPointer())->node;
         Node->remove();
 
         // Remove the object from the world
@@ -161,6 +163,7 @@ void Bullet::ClearObjects() {
         delete Object->getMotionState();
         delete Object->getCollisionShape();
         delete Object;
+        delete Object->getUserPointer();
     }
 
     Objects.clear();

@@ -21,7 +21,12 @@ Player::Player(scene::ISceneManager *p_smgr, Bullet *p_bullet, irr::IEventReceiv
     m_rbody->setAngularFactor(btVector3(0,0,0));
     m_rbody->setFriction(0.8f);
 
-    //m_rbody->setUserPointer(this);
+    UserPointer* userPointer = new UserPointer();
+    userPointer->node = m_node;
+    userPointer->bulletObject = this;
+
+    m_rbody->setUserPointer(userPointer);
+
     m_layer = PLAYER;
 }
 
