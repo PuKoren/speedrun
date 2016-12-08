@@ -5,13 +5,15 @@
 #include "Bullet.h"
 #include "IBulletObject.h"
 
-class Player: public IGameObject, public IBulletObject{
+class Player: public IGameObject, public IBulletObject {
 public:
     Player(irr::scene::ISceneManager* p_smgr, Bullet* p_bullet, irr::IEventReceiver* p_event);
     virtual ~Player();
     virtual void collisionCallback(IBulletObject* p_obj);
     virtual void drawAll();
     virtual void update(irr::u32 DeltaTime, GameStates::GAME_STATE& gs);
+    bool isColliding();
+    bool canJump();
 private:
     core::vector3df getCameraDirection();
     scene::ICameraSceneNode* camera;
@@ -21,4 +23,6 @@ private:
     btRigidBody* m_rbody;
     Bullet* m_bullet;
     LAYER m_layer;
+    float lastCollision = 0.f;
+    float lastJump = 0.f;
 };

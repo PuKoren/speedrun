@@ -1,10 +1,11 @@
 #include "Player.h"
 
 float mMaxSpeed = 100.f;
-const float JUMP_SPEED = 0.25f;
+const float JUMP_SPEED = 4.0f;
 const float ACCELERATION_SPEED = 0.12f;
-const float JUMPDOWN_SPEED = 0.10f;
-scene::ICameraSceneNode* camera;
+const float JUMPDOWN_SPEED = 0.06f;
+const float COLLISION_COOLDOWN = 200.f;
+const float JUMP_COOLDOWN = COLLISION_COOLDOWN;
 
 Player::Player(scene::ISceneManager *p_smgr, Bullet *p_bullet, irr::IEventReceiver* p_event){
     m_smgr = p_smgr;
@@ -40,7 +41,15 @@ void Player::drawAll(){
 }
 
 void Player::collisionCallback(IBulletObject* p_obj){
+    this->lastCollision = 0.f;
+}
 
+bool Player::isColliding() {
+    return this->lastCollision < COLLISION_COOLDOWN;
+}
+
+bool Player::canJump() {
+    return this->isColliding() && this->lastJump > JUMP_COOLDOWN;
 }
 
 core::vector3df Player::getCameraDirection() {
@@ -52,6 +61,8 @@ core::vector3df Player::getCameraDirection() {
     return (target - position).normalize();
 }
 
+bool isJumpKeyDown = false;
+
 void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
     btVector3 velocity = m_rbody->getLinearVelocity();
     btScalar speed = velocity.length();
@@ -60,13 +71,13 @@ void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
         m_rbody->setLinearVelocity(velocity);
     }
 
-    core::vector3df cameraPosition = m_node->getPosition();
-    camera->setPosition(cameraPosition);
-
-    if(m_event->IsKeyDown(KEY_SPACE)){
-        this->canJump = false;
+    if(!isJumpKeyDown && m_event->IsKeyDown(KEY_SPACE) && this->canJump()){
         m_rbody->applyCentralImpulse(btVector3(0,JUMP_SPEED * DeltaTime,0));
+        this->lastCollision = COLLISION_COOLDOWN;
+        this->lastJump = 0.f;
     }
+
+    isJumpKeyDown = m_event->IsKeyDown(KEY_SPACE);
 
     if(m_event->IsKeyDown(KEY_LCONTROL)){
         m_rbody->applyCentralImpulse(btVector3(0,-JUMPDOWN_SPEED * DeltaTime,0));
@@ -109,6 +120,9 @@ void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
 
         m_rbody->applyCentralImpulse(acceleration * btVector3(cameraVectSteer.X, cameraVectSteer.Y, cameraVectSteer.Z));
     }
+
+    this->lastCollision += DeltaTime;
+    this->lastJump += DeltaTime;
 
     // do it at the end of the update so body is moved before camera
     // otherwise with very high speed the capsule will be in another location
