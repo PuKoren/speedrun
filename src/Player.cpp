@@ -142,10 +142,8 @@ void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
 
     //steer
     if(m_event->IsKeyDown(KEY_KEY_A) || m_event->IsKeyDown(KEY_KEY_D)){
-        core::vector3df cameraVectForward = getCameraDirection();
-
         float acceleration = 0.f;
-        core::vector3df cameraVectSteer = cameraVectForward;
+        core::vector3df cameraVectSteer = getCameraDirection();
 
         core::matrix4 m;
         m.setRotationDegrees(core::vector3df(0.f, 90.f, 0.f));
@@ -164,13 +162,11 @@ void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
 
     this->lastCollision += DeltaTime;
     this->lastJump += DeltaTime;
-
     for (float& i : this->dashCooldowns) {
         i += DeltaTime;
     }
 
     // do it at the end of the update so body is moved before camera
     // otherwise with very high speed the capsule will be in another location
-    core::vector3df cameraPosition = m_node->getPosition();
-    this->camera->setPosition(cameraPosition);
+    this->camera->setPosition(m_node->getPosition());
 }
