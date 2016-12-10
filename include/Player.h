@@ -9,7 +9,7 @@ class Player: public IGameObject, public IBulletObject {
 public:
     Player(irr::scene::ISceneManager* p_smgr, Bullet* p_bullet, irr::IEventReceiver* p_event);
     virtual ~Player();
-    virtual void collisionCallback(IBulletObject* p_obj);
+    virtual void collisionCallback(btVector3& p_obj);
     virtual void drawAll();
     virtual void update(irr::u32 DeltaTime, GameStates::GAME_STATE& gs);
     bool isColliding();
@@ -25,5 +25,6 @@ private:
     Bullet* m_bullet;
     LAYER m_layer;
     float lastCollision = 0.f;
+    btVector3 lastCollisionNormal;
     float lastJump = 0.f;
 };

@@ -40,8 +40,9 @@ void Player::drawAll(){
 
 }
 
-void Player::collisionCallback(IBulletObject* p_obj){
+void Player::collisionCallback(btVector3& p_obj){
     this->lastCollision = 0.f;
+    this->lastCollisionNormal = p_obj;
 }
 
 bool Player::isColliding() {
@@ -53,7 +54,7 @@ bool Player::canJump() {
 }
 
 void Player::jump(float force) {
-    m_rbody->applyCentralImpulse(btVector3(0,force,0));
+    m_rbody->applyCentralImpulse(btVector3(this->lastCollisionNormal.x()/2 * force, force, this->lastCollisionNormal.z()/2 * force));
     this->lastCollision = COLLISION_COOLDOWN;
     this->lastJump = 0.f;
 }

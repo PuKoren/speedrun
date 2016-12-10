@@ -1,5 +1,6 @@
 #pragma once
 #include <irrlicht/irrlicht.h>
+#include <bullet/btBulletDynamicsCommon.h>
 #include "config.h"
 
 enum LAYER{
@@ -12,6 +13,6 @@ class IBulletObject{
 public:
     LAYER m_layer = NONE;
     virtual ~IBulletObject() {}
-    virtual void collisionCallback(IBulletObject*) = 0;
+    virtual void collisionCallback(btVector3&) = 0;
 };
 

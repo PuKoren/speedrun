@@ -56,15 +56,12 @@ void Bullet::UpdatePhysics(u32 TDeltaTime) {
             {
                 IBulletObject* objA = ((UserPointer*)obA->getUserPointer())->bulletObject;
                 IBulletObject* objB = ((UserPointer*)obB->getUserPointer())->bulletObject;
-                const btVector3& ptA = pt.getPositionWorldOnA();
-                const btVector3& ptB = pt.getPositionWorldOnB();
-                const btVector3& normalOnB = pt.m_normalWorldOnB;
 
                 if (objA) {
-                    objA->collisionCallback(objB);
+                    objA->collisionCallback(pt.m_normalWorldOnB);
                 }
                 if (objB) {
-                    objB->collisionCallback(objA);
+                    objB->collisionCallback(pt.m_normalWorldOnB);
                 }
             }
         }
