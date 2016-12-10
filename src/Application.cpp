@@ -4,13 +4,15 @@ using namespace irr;
 
 Application::Application(){
 
+    IrrlichtDevice *nulldevice = createDevice(video::EDT_NULL);
+
     SIrrlichtCreationParameters params;
-    params.AntiAlias = 4;
+    params.AntiAlias = 8;
     params.Bits = 32;
-    params.Vsync = true;
+    params.Vsync = false;
     params.DriverType = video::EDT_OPENGL;
     params.Stencilbuffer = true;
-    params.WindowSize = core::dimension2d<u32>(800, 600);
+    params.WindowSize = nulldevice->getVideoModeList()->getDesktopResolution();
     params.EventReceiver = &eventReceiver;
 
     device = createDeviceEx(params);
