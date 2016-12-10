@@ -7,6 +7,7 @@
 #include "config.h"
 #include "Bullet.h"
 #include "Player.h"
+#include "TextureLoader.h"
 
 namespace InGameStates{
     enum States{

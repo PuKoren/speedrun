@@ -10,6 +10,14 @@ GameScreen::GameScreen(IrrlichtDevice *device){
     //video::IVideoDriver* driver = device->getVideoDriver();
     eventmgr = (EventReceiver*)device->getEventReceiver();
 
+    TextureLoader textureLoader(smgr->getVideoDriver());
+    smgr->addSkyBoxSceneNode(textureLoader.loadTexture("skybox/bluecloud_up.jpg"),
+                             textureLoader.loadTexture("skybox/bluecloud_dn.jpg"),
+                             textureLoader.loadTexture("skybox/bluecloud_lf.jpg"),
+                             textureLoader.loadTexture("skybox/bluecloud_rt.jpg"),
+                             textureLoader.loadTexture("skybox/bluecloud_bk.jpg"),
+                             textureLoader.loadTexture("skybox/bluecloud_ft.jpg"));
+
     /*
     irr::scene::ISceneNodeAnimator* anim = smgr->createFlyCircleAnimator(camera->getPosition(), 200.f);
     camera->addAnimator(anim);
