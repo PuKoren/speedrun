@@ -52,6 +52,12 @@ bool Player::canJump() {
     return this->isColliding() && this->lastJump > JUMP_COOLDOWN;
 }
 
+void Player::jump(float force) {
+    m_rbody->applyCentralImpulse(btVector3(0,force,0));
+    this->lastCollision = COLLISION_COOLDOWN;
+    this->lastJump = 0.f;
+}
+
 core::vector3df Player::getCameraDirection() {
     core::vector3df target = this->camera->getTarget();
     core::vector3df position = this->camera->getPosition();
@@ -61,7 +67,7 @@ core::vector3df Player::getCameraDirection() {
     return (target - position).normalize();
 }
 
-bool isJumpKeyDown = false;
+bool previousFrameJumpKeyDown = false;
 
 void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
     btVector3 velocity = m_rbody->getLinearVelocity();
@@ -71,13 +77,11 @@ void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
         m_rbody->setLinearVelocity(velocity);
     }
 
-    if(!isJumpKeyDown && m_event->IsKeyDown(KEY_SPACE) && this->canJump()){
-        m_rbody->applyCentralImpulse(btVector3(0,JUMP_SPEED * DeltaTime,0));
-        this->lastCollision = COLLISION_COOLDOWN;
-        this->lastJump = 0.f;
+    if(!previousFrameJumpKeyDown && m_event->IsKeyDown(KEY_SPACE) && this->canJump()){
+        this->jump(JUMP_SPEED * DeltaTime);
     }
 
-    isJumpKeyDown = m_event->IsKeyDown(KEY_SPACE);
+    previousFrameJumpKeyDown = m_event->IsKeyDown(KEY_SPACE);
 
     if(m_event->IsKeyDown(KEY_LCONTROL)){
         m_rbody->applyCentralImpulse(btVector3(0,-JUMPDOWN_SPEED * DeltaTime,0));

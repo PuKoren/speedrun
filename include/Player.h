@@ -14,6 +14,7 @@ public:
     virtual void update(irr::u32 DeltaTime, GameStates::GAME_STATE& gs);
     bool isColliding();
     bool canJump();
+    void jump(float force);
 private:
     core::vector3df getCameraDirection();
     scene::ICameraSceneNode* camera;

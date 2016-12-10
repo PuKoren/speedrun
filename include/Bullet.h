@@ -5,6 +5,12 @@
 
 using namespace irr;
 
+/**
+ * @brief The Bullet class
+ * Wrapper between Bullet and Irrlicht nodes. The Bullet class is used to
+ * instanciate objects in the Bullet world, make the ticks, and apply
+ * modifications in the 3D world of Irrlicht
+ */
 class Bullet{
 public:
     Bullet();
@@ -28,6 +34,10 @@ private:
     btSequentialImpulseConstraintSolver *Solver;
 };
 
+/**
+ * @brief The UserPointer struct
+ * Contains a reference to an Irrlicht node and a bullet object
+ */
 struct UserPointer {
     scene::ISceneNode* node;
     IBulletObject* bulletObject;
