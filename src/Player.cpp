@@ -1,8 +1,8 @@
 #include "Player.h"
 
 const float MAX_SPEED = 300.f;
-const float JUMP_SPEED = 6.0f;
-const float DASH_SPEED = 13.0f;
+const float JUMP_SPEED = 90.0f;
+const float DASH_SPEED = 90.0f;
 const float DASH_COOLDOWN = 2000.f;
 const float ACCELERATION_SPEED = 0.12f;
 const float JUMPDOWN_SPEED = 0.06f;
@@ -103,24 +103,25 @@ bool previousFrameDashKeyDown = false;
 void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
     btVector3 velocity = m_rbody->getLinearVelocity();
     btScalar speed = velocity.length();
+
     if(speed > MAX_SPEED) {
         velocity *= MAX_SPEED/speed;
         m_rbody->setLinearVelocity(velocity);
     }
 
     if(!previousFrameJumpKeyDown && m_event->IsKeyDown(KEY_SPACE) && this->canJump()){
-        this->jump(JUMP_SPEED * DeltaTime);
+        this->jump(JUMP_SPEED);
     }
 
     if(!previousFrameDashKeyDown && m_event->IsKeyDown(KEY_LSHIFT)) {
-        this->dash(DASH_SPEED * DeltaTime);
+        this->dash(DASH_SPEED);
     }
 
     previousFrameJumpKeyDown = m_event->IsKeyDown(KEY_SPACE);
     previousFrameDashKeyDown = m_event->IsKeyDown(KEY_LSHIFT);
 
     if(m_event->IsKeyDown(KEY_LCONTROL)){
-        m_rbody->applyCentralImpulse(btVector3(0,-JUMPDOWN_SPEED * DeltaTime,0));
+        m_rbody->applyCentralImpulse(btVector3(0, -JUMPDOWN_SPEED * DeltaTime, 0));
     }
 
     //forward/backward
