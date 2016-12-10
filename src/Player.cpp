@@ -1,7 +1,7 @@
 #include "Player.h"
 
-float mMaxSpeed = 100.f;
-const float JUMP_SPEED = 4.0f;
+const float MAX_SPEED = 100.f;
+const float JUMP_SPEED = 6.0f;
 const float ACCELERATION_SPEED = 0.12f;
 const float JUMPDOWN_SPEED = 0.06f;
 const float COLLISION_COOLDOWN = 200.f;
@@ -14,7 +14,7 @@ Player::Player(scene::ISceneManager *p_smgr, Bullet *p_bullet, irr::IEventReceiv
 
     m_node = m_smgr->addCubeSceneNode(1.f, 0, -1, core::vector3df(0.f, 0.f, -20.f), core::vector3df(0.f, 0.f, 0.f), core::vector3df(1.f, 3.f, 1.f));
 
-    camera = m_smgr->addCameraSceneNodeFPS(0, 100.f, 0.f);
+    this->camera = m_smgr->addCameraSceneNodeFPS(0, 100.f, 0.f);
 
     m_rbody = m_bullet->AddCapsule(m_node, 10.f);
     m_rbody->setLinearFactor(btVector3(1,1,1));
@@ -53,8 +53,8 @@ bool Player::canJump() {
 }
 
 core::vector3df Player::getCameraDirection() {
-    core::vector3df target = camera->getTarget();
-    core::vector3df position = camera->getPosition();
+    core::vector3df target = this->camera->getTarget();
+    core::vector3df position = this->camera->getPosition();
     target.Y = 0.f;
     position.Y = 0.f;
 
@@ -66,8 +66,8 @@ bool isJumpKeyDown = false;
 void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
     btVector3 velocity = m_rbody->getLinearVelocity();
     btScalar speed = velocity.length();
-    if(speed > mMaxSpeed) {
-        velocity *= mMaxSpeed/speed;
+    if(speed > MAX_SPEED) {
+        velocity *= MAX_SPEED/speed;
         m_rbody->setLinearVelocity(velocity);
     }
 
@@ -127,5 +127,5 @@ void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
     // do it at the end of the update so body is moved before camera
     // otherwise with very high speed the capsule will be in another location
     core::vector3df cameraPosition = m_node->getPosition();
-    camera->setPosition(cameraPosition);
+    this->camera->setPosition(cameraPosition);
 }
