@@ -1,7 +1,9 @@
 #include "Player.h"
 
-const float MAX_SPEED = 100.f;
+const float MAX_SPEED = 300.f;
 const float JUMP_SPEED = 6.0f;
+const float DASH_SPEED = 13.0f;
+const float DASH_COOLDOWN = 2000.f;
 const float ACCELERATION_SPEED = 0.12f;
 const float JUMPDOWN_SPEED = 0.06f;
 const float COLLISION_COOLDOWN = 200.f;
@@ -29,6 +31,10 @@ Player::Player(scene::ISceneManager *p_smgr, Bullet *p_bullet, irr::IEventReceiv
     m_rbody->setUserPointer(userPointer);
 
     m_layer = PLAYER;
+
+    //we set up 2 dashes
+    this->dashCooldowns.push_back(0.f);
+    this->dashCooldowns.push_back(0.f);
 }
 
 
@@ -53,10 +59,33 @@ bool Player::canJump() {
     return this->isColliding() && this->lastJump > JUMP_COOLDOWN;
 }
 
+bool Player::canDash() {
+    for(float bar : this->dashCooldowns) {
+        if (bar > DASH_COOLDOWN) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void Player::jump(float force) {
     m_rbody->applyCentralImpulse(btVector3(this->lastCollisionNormal.x()/2 * force, force, this->lastCollisionNormal.z()/2 * force));
     this->lastCollision = COLLISION_COOLDOWN;
     this->lastJump = 0.f;
+}
+
+void Player::dash(float force) {
+    if (this->canDash()) {
+        core::vector3df cameraVectForward = getCameraDirection();
+        m_rbody->applyCentralImpulse(force * btVector3(cameraVectForward.X, cameraVectForward.Y, cameraVectForward.Z));
+
+        for (float& i : this->dashCooldowns) {
+            if (i > DASH_COOLDOWN) {
+                i = 0.f;
+                return;
+            }
+        }
+    }
 }
 
 core::vector3df Player::getCameraDirection() {
@@ -69,6 +98,7 @@ core::vector3df Player::getCameraDirection() {
 }
 
 bool previousFrameJumpKeyDown = false;
+bool previousFrameDashKeyDown = false;
 
 void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
     btVector3 velocity = m_rbody->getLinearVelocity();
@@ -82,7 +112,12 @@ void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
         this->jump(JUMP_SPEED * DeltaTime);
     }
 
+    if(!previousFrameDashKeyDown && m_event->IsKeyDown(KEY_LSHIFT)) {
+        this->dash(DASH_SPEED * DeltaTime);
+    }
+
     previousFrameJumpKeyDown = m_event->IsKeyDown(KEY_SPACE);
+    previousFrameDashKeyDown = m_event->IsKeyDown(KEY_LSHIFT);
 
     if(m_event->IsKeyDown(KEY_LCONTROL)){
         m_rbody->applyCentralImpulse(btVector3(0,-JUMPDOWN_SPEED * DeltaTime,0));
@@ -128,6 +163,10 @@ void Player::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
 
     this->lastCollision += DeltaTime;
     this->lastJump += DeltaTime;
+
+    for (float& i : this->dashCooldowns) {
+        i += DeltaTime;
+    }
 
     // do it at the end of the update so body is moved before camera
     // otherwise with very high speed the capsule will be in another location

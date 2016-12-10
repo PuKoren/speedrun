@@ -1,5 +1,6 @@
 #pragma once
 #include <irrlicht/irrlicht.h>
+#include <list>
 #include "IGameObject.h"
 #include "EventReceiver.h"
 #include "Bullet.h"
@@ -14,7 +15,9 @@ public:
     virtual void update(irr::u32 DeltaTime, GameStates::GAME_STATE& gs);
     bool isColliding();
     bool canJump();
+    bool canDash();
     void jump(float force);
+    void dash(float force);
 private:
     core::vector3df getCameraDirection();
     scene::ICameraSceneNode* camera;
@@ -27,4 +30,5 @@ private:
     float lastCollision = 0.f;
     btVector3 lastCollisionNormal;
     float lastJump = 0.f;
+    std::list<float> dashCooldowns;
 };
