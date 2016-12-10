@@ -33,3 +33,4 @@ build/
 
 #qtCreator shit
 CMakeLists.txt.user
+CMakeFiles
