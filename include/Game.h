@@ -8,6 +8,7 @@
 #include "Bullet.h"
 #include "Player.h"
 #include "TextureLoader.h"
+#include "LevelLoader.h"
 
 namespace InGameStates{
     enum States{
@@ -26,6 +27,7 @@ private:
     virtual bool OnEvent(const SEvent& event);
     Bullet* m_bullet;
     Player* m_player;
+    LevelLoader* m_levelLoader;
 public:
     GameScreen(irr::IrrlichtDevice* device);
     virtual ~GameScreen();
